@@ -5,7 +5,14 @@
 //  Created by Joel Sene on 28/01/21.
 //
 
-import Foundation
+import UIKit
+
+//ADD Keys Here
+enum Keys: String {
+    case publicKey = "650e801e1408159969078d2a1361c71c"
+    case secretKey = "20112b45612fd05f0d21d80d70bc8c971695c7f1"
+}
+
 typealias ResultCallback<Value> = (Result<Value, Error>) -> Void
 
 /// Implementation of a generic-based Marvel API client
@@ -32,7 +39,7 @@ typealias ResultCallback<Value> = (Result<Value, Error>) -> Void
                     // Decode the top level response, and look up the decoded response to see
                     // if it's a success or a failure
                     let marvelResponse = try JSONDecoder().decode(MarvelResponse<T.Response>.self, from: data)
-                    print(marvelResponse.data)
+        
                     if let dataContainer = marvelResponse.data {
                         completion(.success(dataContainer))
                     } else if let message = marvelResponse.message {

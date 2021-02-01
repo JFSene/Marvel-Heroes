@@ -16,8 +16,8 @@ class HeroesListWorker
 {
     func doHeroesList(nextPage: Int, result: @escaping(Result<HeroArray, Error>) -> Void)
   {
-    let apiClient = MarvelAPIClient(publicKey: "650e801e1408159969078d2a1361c71c",
-                                    privateKey: "20112b45612fd05f0d21d80d70bc8c971695c7f1")
+        let apiClient = MarvelAPIClient(publicKey: Keys.publicKey.rawValue,
+                                        privateKey: Keys.secretKey.rawValue)
     
     apiClient.send(GetHeroes(limit: 99, offset: nextPage)) { response in
         switch response {

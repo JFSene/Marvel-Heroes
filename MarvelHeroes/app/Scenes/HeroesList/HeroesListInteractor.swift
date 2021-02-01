@@ -43,7 +43,7 @@ class HeroesListInteractor: HeroesListBusinessLogic, HeroesListDataStore
                     self?.presenter?.presentHeroesList(response: model)
                 }
             case .failure(let error):
-                debugPrint(error.localizedDescription)
+                self?.presenter?.showAlert(message: error.localizedDescription)
             }
         }
     }

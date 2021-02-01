@@ -15,10 +15,12 @@ import UIKit
 protocol HeroesListPresentationLogic
 {
   func presentHeroesList(response: HeroesList.Models.Response)
+    func showAlert(message: String)
 }
 
 class HeroesListPresenter: HeroesListPresentationLogic
 {
+    
   weak var viewController: HeroesListDisplayLogic?
   
   // MARK: Do something
@@ -29,5 +31,8 @@ class HeroesListPresenter: HeroesListPresentationLogic
     viewController?.displayHeroesList(viewModel: viewModel)
   }
     
+    func showAlert(message: String) {
+        viewController?.displayAlert(message: message)
+    }
     
 }

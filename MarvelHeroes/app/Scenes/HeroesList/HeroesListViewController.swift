@@ -14,9 +14,11 @@ import UIKit
 
 protocol HeroesListDisplayLogic: class {
     func displayHeroesList(viewModel: HeroesList.Models.ViewModel)
+    func displayAlert(message: String)
 }
 
 class HeroesListViewController: UIViewController, HeroesListDisplayLogic {
+    
     
     var interactor: HeroesListBusinessLogic?
     var router: (NSObjectProtocol & HeroesListRoutingLogic & HeroesListDataPassing)?
@@ -101,6 +103,16 @@ class HeroesListViewController: UIViewController, HeroesListDisplayLogic {
             self.loadingView.isHidden = true
             self.dataSource = viewModel.heroList
             self.tableView.reloadData()
+        }
+    }
+    
+    
+    func displayAlert(message: String) {
+        DispatchQueue.main.async {
+            self.loadingView.stopAnimating()
+            self.loadingView.isHidden = true
+            let alert = Alert.showMessage(title: "Oops...", message: message)
+            self.present(alert, animated: true, completion: nil)
         }
     }
 }
