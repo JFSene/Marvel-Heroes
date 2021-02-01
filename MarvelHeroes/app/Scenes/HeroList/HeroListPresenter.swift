@@ -9,7 +9,7 @@
 import UIKit
 
 protocol HeroListPresentationLogic {
-    func presentSomething(response: HeroList.Something.Response)
+    func presentSomething(response: HeroList.Models.Response)
 }
 
 class HeroListPresenter {
@@ -23,8 +23,8 @@ class HeroListPresenter {
 // MARK: - HeroListPresentationLogic
 extension HeroListPresenter: HeroListPresentationLogic {
     // MARK: PresentSomething
-    func presentSomething(response: HeroList.Something.Response) {
-        let viewModel = HeroList.Something.ViewModel()
+    func presentSomething(response: HeroList.Models.Response) {
+        let viewModel = HeroList.Models.Response(heroList: response.heroList)
         viewController?.displaySomething(viewModel: viewModel)
     }
 }

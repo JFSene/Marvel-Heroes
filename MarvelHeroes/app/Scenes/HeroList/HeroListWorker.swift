@@ -9,7 +9,7 @@
 import UIKit
 
 protocol HeroListWorkerRepresentable {
-    func doSomeWork()
+    func doHero(result: @escaping(Result<HeroArray, Error>) -> Void)
 }
 
 enum HeroListWorkerError: Error {
@@ -27,5 +27,9 @@ enum HeroListWorkerError: Error {
 }
 
 class HeroListWorker: HeroListWorkerRepresentable {
-    func doSomeWork() {}
+    func doHero(result: @escaping (Result<HeroArray, Error>) -> Void) {
+       
+    }
+    
+    
 }

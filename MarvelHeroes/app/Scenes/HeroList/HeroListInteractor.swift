@@ -9,7 +9,7 @@
 import UIKit
 
 protocol HeroListBusinessLogic {
-    func doSomething(request: HeroList.Something.Request)
+    func doHeroList(request: HeroList.Models.Request)
 }
 
 protocol HeroListDataStore {}
@@ -27,10 +27,17 @@ class HeroListInteractor: HeroListDataStore {
 
 // MARK: - HeroListBusinessLogic
 extension HeroListInteractor: HeroListBusinessLogic {
-    func doSomething(request: HeroList.Something.Request) {
-        worker.doSomeWork()
-        
-        let response = HeroList.Something.Response()
-        presenter.presentSomething(response: response)
+    func doHeroList(request: HeroList.Models.Request) {
+        worker.doHero { [weak self] (result) in
+            switch result {
+            case .success(let heroList):
+                let model = HeroList.Models.Response(heroList: heroList)
+                self?.presenter.presentSomething(response: model)
+                print("Model: ", model.heroList)
+            case .failure(let error):
+                debugPrint(error.localizedDescription)
+                
+            }
+        }
     }
 }

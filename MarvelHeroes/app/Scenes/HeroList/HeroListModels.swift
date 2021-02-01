@@ -10,9 +10,11 @@ import UIKit
 
 enum HeroList {
     // MARK: Use cases
-    enum Something {
+    enum Models {
         struct Request {}
-        struct Response {}
+        struct Response {
+            var heroList: HeroArray
+        }
         struct ViewModel {}
     }
 }
