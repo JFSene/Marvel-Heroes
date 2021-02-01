@@ -14,47 +14,49 @@ import UIKit
 
 @objc protocol HeroesListRoutingLogic
 {
-  //func routeToSomewhere(segue: UIStoryboardSegue?)
+    func routeToHeroDetails(segue: UIStoryboardSegue?)
 }
 
 protocol HeroesListDataPassing
 {
-  var dataStore: HeroesListDataStore? { get }
+    var dataStore: HeroesListDataStore? { get }
 }
 
 class HeroesListRouter: NSObject, HeroesListRoutingLogic, HeroesListDataPassing
 {
-  weak var viewController: HeroesListViewController?
-  var dataStore: HeroesListDataStore?
-  
-  // MARK: Routing
-  
-  //func routeToSomewhere(segue: UIStoryboardSegue?)
-  //{
-  //  if let segue = segue {
-  //    let destinationVC = segue.destination as! SomewhereViewController
-  //    var destinationDS = destinationVC.router!.dataStore!
-  //    passDataToSomewhere(source: dataStore!, destination: &destinationDS)
-  //  } else {
-  //    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-  //    let destinationVC = storyboard.instantiateViewController(withIdentifier: "SomewhereViewController") as! SomewhereViewController
-  //    var destinationDS = destinationVC.router!.dataStore!
-  //    passDataToSomewhere(source: dataStore!, destination: &destinationDS)
-  //    navigateToSomewhere(source: viewController!, destination: destinationVC)
-  //  }
-  //}
-
-  // MARK: Navigation
-  
-  //func navigateToSomewhere(source: HeroesListViewController, destination: SomewhereViewController)
-  //{
-  //  source.show(destination, sender: nil)
-  //}
-  
-  // MARK: Passing data
-  
-  //func passDataToSomewhere(source: HeroesListDataStore, destination: inout SomewhereDataStore)
-  //{
-  //  destination.name = source.name
-  //}
+    weak var viewController: HeroesListViewController?
+    var dataStore: HeroesListDataStore?
+    
+    // MARK: Routing
+    
+    func routeToHeroDetails(segue: UIStoryboardSegue?){
+        if let segue = segue {
+            let destination = segue.destination as? HeroDetailsViewController
+            var heroDetailsDataStore = destination?.router?.dataStore
+            passDataToHeroDetails(source: dataStore!, destination: &(heroDetailsDataStore)!)
+        } else {
+            let storyboard = UIStoryboard(name: "HeroDetails", bundle: nil)
+            let destinationVC = storyboard.instantiateViewController(withIdentifier: "HeroDetailsViewController") as! HeroDetailsViewController
+            var destinationDS = destinationVC.router!.dataStore!
+            passDataToHeroDetails(source: dataStore!, destination: &destinationDS)
+            navigateToHeroDetails(source: viewController!, destination: destinationVC)
+        }
+    }
+    
+    
+    // MARK: Navigation
+    
+    func navigateToHeroDetails(source: HeroesListViewController, destination: HeroDetailsViewController)
+    {
+        source.show(destination, sender: nil)
+    }
+    
+    // MARK: Passing data
+    
+    func passDataToHeroDetails(source: HeroesListDataStore, destination: inout HeroDetailsDataStore)
+    {
+        guard let selectedHeroRow = viewController?.tableView.indexPathForSelectedRow?.row else { return }
+        let selectedHero = viewController?.dataSource?.heroList[selectedHeroRow]
+        destination.hero = selectedHero
+    }
 }

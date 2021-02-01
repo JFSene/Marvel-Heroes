@@ -15,7 +15,9 @@ import UIKit
 enum HeroesList {
     // MARK: Use cases
     enum Models {
-        struct Request {}
+        struct Request {
+            var offset: Int
+        }
         struct Response {
             var heroList: HeroArray
         }

@@ -14,14 +14,15 @@ import UIKit
 
 class HeroesListWorker
 {
-  func doHeroesList(result: @escaping(Result<HeroArray, Error>) -> Void)
+    func doHeroesList(nextPage: Int, result: @escaping(Result<HeroArray, Error>) -> Void)
   {
     let apiClient = MarvelAPIClient(publicKey: "650e801e1408159969078d2a1361c71c",
                                     privateKey: "20112b45612fd05f0d21d80d70bc8c971695c7f1")
     
-    apiClient.send(GetHeroes()) { response in
+    apiClient.send(GetHeroes(limit: 99, offset: nextPage)) { response in
         switch response {
         case .success(let heroes):
+            debugPrint(heroes)
             let model = HeroArray(heroList: heroes.results)
             result(.success(model))
         case .failure(let error):

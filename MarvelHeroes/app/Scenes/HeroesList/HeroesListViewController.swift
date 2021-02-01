@@ -12,83 +12,95 @@
 
 import UIKit
 
-protocol HeroesListDisplayLogic: class
-{
-  func displayHeroesList(viewModel: HeroesList.Models.ViewModel)
+protocol HeroesListDisplayLogic: class {
+    func displayHeroesList(viewModel: HeroesList.Models.ViewModel)
 }
 
-class HeroesListViewController: UIViewController, HeroesListDisplayLogic
-{
+class HeroesListViewController: UIViewController, HeroesListDisplayLogic {
     
-  var interactor: HeroesListBusinessLogic?
-  var router: (NSObjectProtocol & HeroesListRoutingLogic & HeroesListDataPassing)?
-
-  // MARK: Object lifecycle
-  
-  override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?)
-  {
-    super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    setup()
-  }
-  
-  required init?(coder aDecoder: NSCoder)
-  {
-    super.init(coder: aDecoder)
-    setup()
-  }
-  
-  // MARK: Setup
-  
-  private func setup()
-  {
-    let viewController = self
-    let interactor = HeroesListInteractor()
-    let presenter = HeroesListPresenter()
-    let router = HeroesListRouter()
-    viewController.interactor = interactor
-    viewController.router = router
-    interactor.presenter = presenter
-    presenter.viewController = viewController
-    router.viewController = viewController
-    router.dataStore = interactor
-  }
-  
-  // MARK: Routing
-  
-  override func prepare(for segue: UIStoryboardSegue, sender: Any?)
-  {
-    if let scene = segue.identifier {
-      let selector = NSSelectorFromString("routeTo\(scene)WithSegue:")
-      if let router = router, router.responds(to: selector) {
-        router.perform(selector, with: segue)
-      }
+    var interactor: HeroesListBusinessLogic?
+    var router: (NSObjectProtocol & HeroesListRoutingLogic & HeroesListDataPassing)?
+    
+    // MARK: Object lifecycle
+    
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        setup()
     }
-  }
-  
-  // MARK: View lifecycle
-  
-  override func viewDidLoad()
-  {
-    super.viewDidLoad()
-    callHeroesListAPI()
-  }
-  
-  // MARK: Do something
-  
-    @IBOutlet weak var nameLabel: UILabel!
-    var dataSource: HeroArray?
     
-  func callHeroesListAPI()
-  {
-    let request = HeroesList.Models.Request()
-    interactor?.doHeroesList(request: request)
-  }
-  
- 
-    func displayHeroesList(viewModel: HeroesList.Models.ViewModel) {
-            self.dataSource = viewModel.heroList
-            self.nameLabel.text = self.dataSource?.heroList[0]?.name
-            print(viewModel.heroList)
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setup()
+    }
+    
+    // MARK: Setup
+    
+    private func setup() {
+        let viewController = self
+        let interactor = HeroesListInteractor()
+        let presenter = HeroesListPresenter()
+        let router = HeroesListRouter()
+        viewController.interactor = interactor
+        viewController.router = router
+        interactor.presenter = presenter
+        presenter.viewController = viewController
+        router.viewController = viewController
+        router.dataStore = interactor
+    }
+    
+    // MARK: Routing
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let scene = segue.identifier {
+            let selector = NSSelectorFromString("routeTo\(scene)WithSegue:")
+            if let router = router, router.responds(to: selector) {
+                router.perform(selector, with: segue)
+            }
+        }
+    }
+    
+    // MARK: View lifecycle
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        callHeroesListAPI()
+    }
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupTableView(tableView)
         
+    }
+    
+    
+    
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var loadingView: UIActivityIndicatorView!
+    var dataSource: HeroArray?
+    var offset: Int = 0
+    var limit: Int = 35
+    
+    private func setupTableView(_ tableView: UITableView) {
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.registerNibFrom(HeroesListTableViewCell.self)
+        tableView.estimatedRowHeight = UITableView.automaticDimension
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.reloadData()
+    }
+    
+    func callHeroesListAPI() {
+        loadingView.startAnimating()
+        
+        let request = HeroesList.Models.Request(offset: offset)
+        interactor?.doHeroesList(request: request)
+    }
+    
+    
+    func displayHeroesList(viewModel: HeroesList.Models.ViewModel) {
+        DispatchQueue.main.async {
+            self.loadingView.stopAnimating()
+            self.loadingView.isHidden = true
+            self.dataSource = viewModel.heroList
+            self.tableView.reloadData()
+        }
     }
 }

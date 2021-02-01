@@ -28,10 +28,11 @@ typealias ResultCallback<Value> = (Result<Value, Error>) -> Void
         let task = session.dataTask(with: URLRequest(url: endpoint)) { data, response, error in
             if let data = data {
                 do {
+                    
                     // Decode the top level response, and look up the decoded response to see
                     // if it's a success or a failure
                     let marvelResponse = try JSONDecoder().decode(MarvelResponse<T.Response>.self, from: data)
-
+                    print(marvelResponse.data)
                     if let dataContainer = marvelResponse.data {
                         completion(.success(dataContainer))
                     } else if let message = marvelResponse.message {
